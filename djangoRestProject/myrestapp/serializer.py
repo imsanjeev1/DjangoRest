@@ -1,13 +1,17 @@
 from rest_framework import  serializers
 import re
 from .models import Todo
+from django.template.defaultfilters import slugify
+
 class ToDoSerializer(serializers.ModelSerializer):
+    slug = serializers.SerializerMethodField()
     class Meta:
         model =Todo
         # fields = "__all__" # when displayed all the field in api the use this
-        fields =["todo_title","todo_description","is_done","uid"]
+        fields =["todo_title","slug","todo_description","is_done","uid"]
         #exclude =["todo_title"] Exclude key word use to not displayed the field
-
+    def get_slug(self,obj):
+        return slugify(obj.todo_title)
     #Data Validation
     def validate_todo_title(self,data):
         if data:
