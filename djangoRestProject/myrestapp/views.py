@@ -6,6 +6,7 @@ from .models import Todo
 #class based View class
 from rest_framework.views import APIView
 
+from rest_framework import viewsets,status
 #End
 
 @api_view(["GET","POST","PATCH"])
@@ -108,6 +109,12 @@ class TodoView(APIView):
     def delete(self,request):
         return Response({'message': "DjangoRest Delete Api working !", "status": 200})
 
+#End Class View set api
 
+#Model ViewSet
+
+class TodoViewSet(viewsets.ModelViewSet):
+    queryset = Todo.objects.all()
+    serializer_class = ToDoSerializer
 
 
