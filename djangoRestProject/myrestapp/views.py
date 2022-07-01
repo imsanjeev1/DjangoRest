@@ -8,7 +8,8 @@ from rest_framework.views import APIView
 
 from rest_framework import viewsets,status
 from rest_framework.decorators import action
-
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 #End
 
 @api_view(["GET","POST","PATCH"])
@@ -73,9 +74,12 @@ def patch_todo(request):
 #Convert above Function Based api to below class based api
 
 class TodoView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     def post(self,request):
         try:
             data = request.data
+            data["user"] = request.user.id
             seriallzer = ToDoSerializer(data=data)
             if seriallzer.is_valid():
                 # print(seriallzer.data)
@@ -87,7 +91,9 @@ class TodoView(APIView):
             return Response({'message': "Something went Wrong!", "status": False})
 
     def get(self,request):
-        todo_objs = Todo.objects.all()
+        print(request.user)
+        todo_objs = Todo.objects.filter(user = request.user)
+        # todo_objs = Todo.objects.all()
         serializer = ToDoSerializer(todo_objs, many=True)  # more than one object therefore retun many =True
         return Response({"status": True, "message": "Fetched data", "data": serializer.data})
 

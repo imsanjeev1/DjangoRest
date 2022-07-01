@@ -8,7 +8,7 @@ class ToDoSerializer(serializers.ModelSerializer):
     class Meta:
         model =Todo
         # fields = "__all__" # when displayed all the field in api the use this
-        fields =["todo_title","slug","todo_description","is_done", "uid"]
+        fields =["user", "todo_title","slug","todo_description","is_done", "uid"]
         #exclude =["todo_title"] Exclude key word use to not displayed the field
 
     def get_slug(self,obj):
