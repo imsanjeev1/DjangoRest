@@ -3,6 +3,11 @@ from rest_framework.response import Response
 # Create your views here.
 from .serializer import ToDoSerializer
 from .models import Todo
+#class based View class
+from rest_framework.views import APIView
+
+#End
+
 @api_view(["GET","POST","PATCH"])
 def home(request):
     if request.method =="GET":
@@ -16,6 +21,7 @@ def home(request):
 
 
 
+#Function Based View For Rest API
 @api_view(["GET"])
 def get_todo(request):
     todo_objs = Todo.objects.all()
@@ -55,5 +61,25 @@ def patch_todo(request):
     except Exception as e:
         print(e)
         return Response({'message': "Invalid Uid !", "status": False,'data':{}})
+
+
+#End
+
+
+#Class Based View
+
+class TodoView(APIView):
+    def post(self,request):
+        return Response({'message': "DjangoRest POST Api working !", "status": 200})
+    def get(self,request):
+        return Response({'message': "DjangoRest Get Api working !", "status": 200})
+    def patch(self,request):
+        return Response({'message': "DjangoRest PATCH Api working !", "status": 200})
+    def put(self,request):
+        return Response({'message': "DjangoRest PUT Api working !", "status": 200})
+    def delete(self,request):
+        return Response({'message': "DjangoRest Delete Api working !", "status": 200})
+
+
 
 
