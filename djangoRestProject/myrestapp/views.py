@@ -35,3 +35,25 @@ def post_todo(request):
     except Exception as e:
         print(e)
         return Response({'message': "Something went Wrong!", "status": False})
+
+@api_view(["PATCH"])
+def patch_todo(request):
+    import pdb
+    # pdb.set_trace()
+    try:
+        data = request.data
+        if not data.get('uid'):
+            return Response({"status": False, 'message': "Uid is required !", 'data': {}})
+        obj = Todo.objects.get(uid = data.get('uid'))
+        # print('2222222222'+obj)
+        serializer = ToDoSerializer(obj , data = data , partial = True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"status": True, 'message': "PATCH Updated !", 'data': serializer.data})
+
+        return Response({'message': "Invalid data !", "status": False,'data':serializer.errors})
+    except Exception as e:
+        print(e)
+        return Response({'message': "Invalid Uid !", "status": False,'data':{}})
+
+
