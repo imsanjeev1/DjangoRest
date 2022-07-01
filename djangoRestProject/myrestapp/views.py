@@ -66,15 +66,43 @@ def patch_todo(request):
 #End
 
 
-#Class Based View
+#Class Based View For Rest API
+#Convert above Function Based api to below class based api
 
 class TodoView(APIView):
     def post(self,request):
-        return Response({'message': "DjangoRest POST Api working !", "status": 200})
+        try:
+            data = request.data
+            seriallzer = ToDoSerializer(data=data)
+            if seriallzer.is_valid():
+                # print(seriallzer.data)
+                seriallzer.save()
+                return Response({"status": True, 'message': "Success Data !", 'data': seriallzer.data})
+            return Response({"status": False, 'message': "Invalid Data !", 'data': seriallzer.errors})
+        except Exception as e:
+            print(e)
+            return Response({'message': "Something went Wrong!", "status": False})
+
     def get(self,request):
-        return Response({'message': "DjangoRest Get Api working !", "status": 200})
+        todo_objs = Todo.objects.all()
+        serializer = ToDoSerializer(todo_objs, many=True)  # more than one object therefore retun many =True
+        return Response({"status": True, "message": "Fetched data", "data": serializer.data})
+
     def patch(self,request):
-        return Response({'message': "DjangoRest PATCH Api working !", "status": 200})
+        try:
+            data = request.data
+            if not data.get('uid'):
+                return Response({"status": False, 'message': "Uid is required !", 'data': {}})
+            obj = Todo.objects.get(uid=data.get('uid'))
+            serializer = ToDoSerializer(obj, data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({"status": True, 'message': "PATCH Updated !", 'data': serializer.data})
+
+            return Response({'message': "Invalid data !", "status": False, 'data': serializer.errors})
+        except Exception as e:
+            print(e)
+            return Response({'message': "Invalid Uid !", "status": False, 'data': {}})
     def put(self,request):
         return Response({'message': "DjangoRest PUT Api working !", "status": 200})
     def delete(self,request):
