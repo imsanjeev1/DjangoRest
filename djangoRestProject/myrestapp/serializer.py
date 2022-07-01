@@ -1,6 +1,6 @@
 from rest_framework import  serializers
 import re
-from .models import Todo
+from .models import *
 from django.template.defaultfilters import slugify
 
 class ToDoSerializer(serializers.ModelSerializer):
@@ -34,4 +34,16 @@ class ToDoSerializer(serializers.ModelSerializer):
     #         if not regex.search(todo_title)==None:
     #             raise serializers.ValidationError("todo_title cannot contain special character !")
     #     return validate_data
+
+
+class TimingTodoSerializer(serializers.ModelSerializer):
+    #when you want only declaed field information displayed then call the method.you will get only this information of foreign key that you set the Field
+    todo= ToDoSerializer()
+    class Meta:
+        model= TimingTodo
+        exclude =['created_at', 'updated_at']
+        #When you want get Foreign key all information oftodo entire column then use depth =1
+        # depth=1
+        #method and fields
+
 

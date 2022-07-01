@@ -1,12 +1,14 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 # Create your views here.
-from .serializer import ToDoSerializer
+from .serializer import *
 from .models import Todo
 #class based View class
 from rest_framework.views import APIView
 
 from rest_framework import viewsets,status
+from rest_framework.decorators import action
+
 #End
 
 @api_view(["GET","POST","PATCH"])
@@ -116,5 +118,29 @@ class TodoView(APIView):
 class TodoViewSet(viewsets.ModelViewSet):
     queryset = Todo.objects.all()
     serializer_class = ToDoSerializer
+    #For Custom Method Work with action module of rest_framework
+    @action(detail=False,methods=["post"])
+    def add_custom_date_to_todo(self,request):
+        try:
+            data = request.data
+            serializer = TimingTodoSerializer(data = data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({"status": True, 'message': "Success Data !", 'data': serializer.data})
+            return Response({"status": False, 'message': "Invalid Data !", 'data': serializer.errors})
+        except Exception as e:
+            print(e)
+            return Response({"status": False, 'message': "Invalid Key !", 'data': {}})
+
+    @action(detail=False,methods=["GET"])
+    def get_custom_timing_data_todo(self,request):
+        try:
+            objs = TimingTodo.objects.all()
+            serializer = TimingTodoSerializer(objs,many=True)
+            return Response({"status":True,"message":"Timing todo data Fetched","data":serializer.data})
+        except Exception as e:
+            print(e)
+
+
 
 
